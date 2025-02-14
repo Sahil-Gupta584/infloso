@@ -20,11 +20,10 @@ A secure, full-stack app for **MelodyVerse**, a fictional music streaming servic
 
 1. **Clone the repo**:
    ```bash
-   git clone https://github.com/your-username/melody-verse.git
-   cd melody-verse
+   git clone https://github.com/Sahil-Gupta584/infloso.git .
    ```
 2. **Setup Envs**
-    - create a .env file in connect-verse(backend)
+    - rename .env.sample file to just .env in connect-verse(backend)
     - copy this keys ans paste it in /connect-verse(backend)/.env file
       
   
@@ -79,4 +78,5 @@ A secure, full-stack app for **MelodyVerse**, a fictional music streaming servic
 - **JWT** for authentication.
 - **bcrypt** for secure password hashing.
 - Input validation and error handling throughout.
+- Email otp verification with nodemailer
 
