@@ -4,33 +4,49 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AuthLayout } from '../components/AuthLayout';
-import { signupSchema } from '../lib/validation'; // Update this schema to handle optional fields
-import { setAuthCookie } from '../lib/auth';
+import { signupSchema } from '../lib/validation';
 
 export type SignupFormData = z.infer<typeof signupSchema>;
 
 export function Signup() {
   const [showPass, setShowPass] = useState(false);
-  const [profilePicture, setProfilePicture] = useState<File | null>(null); // State for profile picture
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    setError,
+    formState: { errors, isSubmitting, },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('data', data);
 
-      // In a real app, you would create the account with your backend
-      setAuthCookie('dummy_token', true);
+      delete data.confirmPassword
+      const res = await fetch('http://localhost:3000/signup', {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+
+      const result = await res.json()
+      console.log('result', result);
+
+      if (res.status !== 201) {
+        setError('root', { message: result.message })
+        return;
+      }
+
       navigate('/login');
     } catch (error) {
       console.error('Signup failed:', error);
+      setError('root',{message:(error as Error).message})
+
     }
   };
 
@@ -91,7 +107,6 @@ export function Signup() {
           Show Password
         </label>
 
-        {/* Name (Optional) */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Full Name (Optional)</label>
           <input
@@ -102,7 +117,6 @@ export function Signup() {
           {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name?.message}</p>}
         </div>
 
-        {/* Profile Picture (Optional) */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture (Optional)</label>
           <input
@@ -123,6 +137,9 @@ export function Signup() {
             />
             <p className="ml-2">I accept the <span className="text-blue-600">Terms & Conditions</span></p>
           </label>
+          {errors.acceptTnC && <p className="mt-1 text-sm text-red-500">{errors.acceptTnC?.message}</p>}
+          {errors.root && <p className="mt-1 text-sm text-red-500">{errors.root?.message}</p>}
+
         </div>
 
         <button

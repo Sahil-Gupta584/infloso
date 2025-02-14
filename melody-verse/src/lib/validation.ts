@@ -16,11 +16,14 @@
       .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
       .regex(/[0-9]/, 'Password must contain at least one number')
       .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().optional( ),
     acceptTnC:z.boolean(),
-    name:z.string().max(30),
-    profileImg:z.string(),
+    name:z.string().max(30).optional(),
+    profileImg:z.string().optional(),
   }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
+  }).refine((data)=>data.acceptTnC === true,{
+    message:"Please accept Terms and Conditions.",
+    path:['acceptTnC']
   });

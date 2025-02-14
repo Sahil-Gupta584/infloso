@@ -1,29 +1,47 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AuthLayout } from '../components/AuthLayout';
 import { loginSchema } from '../lib/validation';
-import { setAuthCookie } from '../lib/auth';
+import { sendOtp } from '../lib/auth';
 import { Dispatch, SetStateAction, useState } from 'react';
 import VerifyEmail from './verifyEmail';
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
+export interface TVerifyEmailData {
+  email?: string;
+  otp?: string
+}
+
+interface LoginFormProps {
+  setShowOtpForm: Dispatch<SetStateAction<boolean>>;
+  setVerifyEmailData: Dispatch<SetStateAction<TVerifyEmailData>>;
+}
 
 export function Login() {
   const [showOtpForm, setShowOtpForm] = useState(false)
-  return (showOtpForm ? <VerifyEmail /> : <LoginForm setShowOtpForm={setShowOtpForm} />)
+  const [verifyEmailData, setVerifyEmailData] = useState<TVerifyEmailData>({
+    email: '',
+    otp: ''
+  })
+
+  return (
+    showOtpForm ? <VerifyEmail verifyEmailData={verifyEmailData} setVerifyEmailData={setVerifyEmailData} />
+      :
+      <LoginForm setShowOtpForm={setShowOtpForm} setVerifyEmailData={setVerifyEmailData} />)
 }
 
 
-function LoginForm({ setShowOtpForm }:{setShowOtpForm:Dispatch<SetStateAction<boolean>>}) {
-  const navigate = useNavigate();
+
+function LoginForm({ setShowOtpForm, setVerifyEmailData }: LoginFormProps) {
   const [showPass, setShowPass] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -31,14 +49,29 @@ function LoginForm({ setShowOtpForm }:{setShowOtpForm:Dispatch<SetStateAction<bo
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log('data', data);
+      const res = await fetch('http://localhost:3000/login', {
+        method: 'post',
+        body: JSON.stringify(data),
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await res.json()
 
-      setAuthCookie('dummy_token', data.rememberMe || false);
-      navigate('/home');
+      if (res.status !== 200) {
+        setError('root', { message: result.message })
+        return;
+      }
+
+      const ogOtp = await sendOtp(data.email) as string
+
+      setVerifyEmailData({ otp: ogOtp })
+      setShowOtpForm(true)
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Signup failed:', error);
+      setError('root',{message:(error as Error).message})
     }
   };
 
@@ -67,7 +100,7 @@ function LoginForm({ setShowOtpForm }:{setShowOtpForm:Dispatch<SetStateAction<bo
           />
           {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password?.message}</p>}
 
-          {/* Button to toggle password visibility */}
+          {errors.root && <p className="mt-1 text-sm text-red-500">{errors.root?.message}</p>}
           <button
             type="button"
             onClick={() => setShowPass((prev) => !prev)}
@@ -86,12 +119,7 @@ function LoginForm({ setShowOtpForm }:{setShowOtpForm:Dispatch<SetStateAction<bo
             />
             <p className="ml-2 text-sm text-gray-600">Remember me</p>
           </label>
-          <Link
-            to="/forgot-password"
-            className="text-sm text-indigo-600 hover:text-indigo-500"
-          >
-            Forgot password?
-          </Link>
+
         </div>
 
         <button
@@ -109,6 +137,13 @@ function LoginForm({ setShowOtpForm }:{setShowOtpForm:Dispatch<SetStateAction<bo
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
             Sign up
+          </Link>
+          <br />
+          <Link
+            to="/"
+            className="text-sm text-center font-medium mx-auto text-blue-700 hover:text-indigo-500"
+          >
+            Forgot password?
           </Link>
         </p>
       </form>
