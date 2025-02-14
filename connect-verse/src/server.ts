@@ -27,7 +27,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", 
+    origin: ["http://localhost:5173","https://5173-sahilgupta584-infloso-hudpm2iducw.ws-us117.gitpod.io"], 
     credentials: true,
   })
 );

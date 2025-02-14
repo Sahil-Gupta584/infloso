@@ -24,7 +24,7 @@ A secure, full-stack app for **MelodyVerse**, a fictional music streaming servic
    ```
 2. **Setup Envs**
     - rename .env.sample file to just .env in connect-verse(backend)
-    - copy this keys ans paste it in /connect-verse(backend)/.env file
+    - copy this keys ans paste it in /connect-verse/.env file
       
   
     ```bash
@@ -43,6 +43,8 @@ A secure, full-stack app for **MelodyVerse**, a fictional music streaming servic
         - NODEMAILER_USER is the email
         - pass and email should be of same email
 
+  
+
 3. **Backend**:
    
    ```bash
@@ -55,7 +57,9 @@ A secure, full-stack app for **MelodyVerse**, a fictional music streaming servic
 
 4. **Frontend**:
 
-   in new terminal (ctrl+shift+5, keep cursor focus on terminal)
+   In new terminal (ctrl+shift+5, keep cursor focus on terminal).
+   Andmake sure 2ndterminal is in root directory id isn't run  `cd ..`
+   
    ```bash
    cd melody-verse; npm install; npm run dev 
    ```

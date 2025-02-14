@@ -7,4 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  server:{allowedHosts:['5173-sahilgupta584-infloso-hudpm2iducw.ws-us117.gitpod.io']}
 });
