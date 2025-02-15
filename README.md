@@ -1,4 +1,4 @@
-# MelodyVerse - Full Stack Login & Signup App
+  # MelodyVerse - Full Stack Login & Signup App
 
 A secure, full-stack app for **MelodyVerse**, a fictional music streaming service, featuring **JWT authentication** for user login and signup. Built with **React.js** for the frontend and **Node.js** (Express) for the backend API.
 
@@ -36,7 +36,7 @@ A secure, full-stack app for **MelodyVerse**, a fictional music streaming servic
 
     ```
     - replace MONGO_URI value with your local or cloud uri
-    - if you want email otp verification, you will need to get appPassword for you gmail (it may take time so you can skip this step,but make sure while logging in click on home instead continue):
+    - if you want email otp verification, you will need to get appPassword for you gmail (it may take time so you can skip this step,but make sure while logging in click on home instead Sign In):
 
         - go to https://myaccount.google.com/security and see if you have enabled 2-step verification (if not enabled, it will take time you can refer external resources to how to enable it or skip this step)
         - go to https://myaccount.google.com/apppasswords create new instance and note code and replace  NODEMAILER_PASS value with actual code
